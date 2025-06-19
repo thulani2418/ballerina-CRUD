@@ -1,53 +1,38 @@
-// Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
-//
-// This software is the property of WSO2 LLC. and its suppliers, if any.
-// Dissemination of any information or reproduction of any material contained
-// herein in any form is strictly forbidden, unless permitted by WSO2 expressly.
-// You may not alter or remove any copyright or other notice from copies of this content.
 import ballerina/sql;
+import ballerina/io;
 
-# Fetch sample collections.
-#
-# + name - Name to filter
-# + 'limit - Limit of the response
-# + offset - Offset of the number of sample collection to retrieve
-# + return - List of sample collections|Error
-public isolated function fetchSampleCollections(string? name, int? 'limit, int? offset) returns SampleCollection[]|error {
-    stream<SampleCollection, error?> resultStream = databaseClient->
-            query(getSampleCollectionsQuery(name, 'limit, offset));
-
-    SampleCollection[] sampleCollections = [];
-    check from SampleCollection sampleCollection in resultStream
+// Define the function to fetch books from the database.
+public function getUsers() returns Users[]|error {
+    Users[] users = [];
+    stream<Users, error?> resultStream = dbClient->query(`SELECT * FROM users`);
+    io:println("Query executed, checking results..."); 
+    check from Users user in resultStream
         do {
-            sampleCollections.push(sampleCollection);
+            io:println("Found user: ", user); 
+            users.push(user);
         };
-
-    return sampleCollections;
+    return users;
 }
 
-# Fetch specific sample collection.
-#
-# + id - Identification of the sample collection
-# + return - Sample collections|Error, if so
-public isolated function fetchSampleCollection(int id) returns SampleCollection|error? {
-    SampleCollection|sql:Error sampleCollection = databaseClient->queryRow(getSampleCollectionQuery(id));
-
-    if sampleCollection is sql:Error && sampleCollection is sql:NoRowsError {
-        return;
-    }
-    return sampleCollection;
+public isolated function insertUser(UserCreate payload) returns sql:ExecutionResult|sql:Error {
+    return dbClient->execute(insertUserQuery(payload));
 }
 
-# Insert sample collection.
-#
-# + sampleCollection - Sample collection payload
-# + createdBy - Person who created the sample collection
-# + return - Id of the sample collection|Error
-public isolated function addSampleCollection(AddSampleCollection sampleCollection, string createdBy) returns int|error {
-    sql:ExecutionResult|error executionResults = databaseClient->execute(addSampleCollectionQuery(sampleCollection, createdBy));
-    if executionResults is error {
-        return executionResults;
-    }
+public isolated function deleteUser(int userId) returns sql:ExecutionResult|sql:Error {
+    return dbClient->execute(deleteUserQuery(userId));
+}
 
-    return <int>executionResults.lastInsertId;
+public isolated function updateUser(int userId, UserUpdate payload) returns sql:ExecutionResult|sql:Error {
+    return dbClient->execute(updateUserQuery(userId, payload));
+}
+
+public function getUserById(int id) returns Users|error {
+    stream<Users, error?> resultStream = dbClient->query(`SELECT * FROM users WHERE id = ${id}`);
+    record {|Users value;|}? result = check resultStream.next();
+    
+    if result is () {
+        return error("User not found");
+    }
+    
+    return result.value;
 }

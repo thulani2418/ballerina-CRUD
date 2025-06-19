@@ -1,53 +1,57 @@
-// Copyright (c) 2024, WSO2 LLC. (https://www.wso2.com). All Rights Reserved.
-//
-// This software is the property of WSO2 LLC. and its suppliers, if any.
-// Dissemination of any information or reproduction of any material contained
-// herein in any form is strictly forbidden, unless permitted by WSO2 expressly.
-// You may not alter or remove any copyright or other notice from copies of this content.
 import ballerina/sql;
-import ballerinax/mysql;
 
-# [Configurable] database configs.
 type DatabaseConfig record {|
-    # Database User 
+    # User of the database
     string user;
-    # Database Password
+    # Password of the database
     string password;
-    # Database Name
+    # Name of the database
     string database;
-    # Database Host
+    # Host of the database
     string host;
-    # Database port
+    # Port
     int port;
-    # Database connection pool
-    sql:ConnectionPool connectionPool;
 |};
 
-# Database config record.
-type DatabaseClientConfig record {|
-    *DatabaseConfig;
-    # Additional configurations related to the MySQL database connection
-    mysql:Options? options;
-|};
+// User record type
+public type Users record {|
+    // User ID
+    @sql:Column {name: "id"}
+    readonly int id;
 
-# [Database]SampleCollection type.
-public type SampleCollection record {|
-    # Id of the collection
-    int id;
-    # Name
+    // User name
+    @sql:Column {name: "name"}
     string name;
-    # Timestamp, when created
-    string createdOn;
-    # Person, who created
-    string createdBy;
-    # Timestamp, when updated
-    string updatedOn;
-    # Person, who updates
-    string updatedBy;
+
+    // User email
+    @sql:Column {name: "email"}
+    string email;
+
+    // User age
+    @sql:Column {name: "age"}
+    string age;
+
+    // // User account creation time
+    // @sql:Column {name: "created_at"}
+    // readonly string createdAt;
+
+    // // User account last updated time
+    // @sql:Column {name: "updated_at"}
+    // readonly string updatedAt;
 |};
 
-# [Database]Collection insert type.
-public type AddSampleCollection record {|
-    # Name of the collection
+public type UserCreate record {|
     string name;
+    string email;
+    string age;
 |};
+
+public type UserUpdate record {|
+    string? name = ();
+    string? email = ();
+    string? age = ();
+|};
+
+
+
+
