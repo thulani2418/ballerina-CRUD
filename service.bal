@@ -63,5 +63,35 @@ resource function patch users/[int id](database:UserUpdate user) returns http:No
     return http:NO_CONTENT;
 }
 
+
+resource function get users/search(@http:Query string name) returns database:Users[]|http:InternalServerError {
+    database:Users[]|error response = database:searchUserByName(name);
+
+    if response is error {
+        return <http:InternalServerError>{
+            body: "Error while searching user by name"
+        };
+    }
+
+    return response;
+    }
+
+    resource function get users/[int id]() returns database:Users|http:NotFound|http:InternalServerError {
+    database:Users|error response = database:getUserById(id);
+
+    if response is error {
+        if response.message() == "User not found" {
+            return <http:NotFound>{
+                body: "User not found"
+            };
+        }
+        return <http:InternalServerError>{
+            body: "Error retrieving user"
+        };
+    }
+
+    return response;
+}
+
 }
 
