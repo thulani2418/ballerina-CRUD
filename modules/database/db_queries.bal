@@ -44,21 +44,23 @@ isolated function searchUserByNameQuery(string name) returns sql:ParameterizedQu
         id,
         name,
         email,
-        address
+        age
     FROM 
-        user
+        Users
     WHERE
-        name LIKE ${"%"+name+"%"}
+        name LIKE ${"%" + name + "%"}
 `;
 
-isolated function getUserByIdQuery(int id) returns sql:ParameterizedQuery => `
+
+isolated function getUserByIdQuery(int userId) returns sql:ParameterizedQuery => `
     SELECT 
         id,
         name,
         email,
-        address
+        age
     FROM 
-        user
+        Users
     WHERE
-        id = ${id}
+        id = ${userId}
 `;
+

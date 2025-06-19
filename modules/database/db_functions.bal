@@ -38,19 +38,15 @@ public isolated function searchUserByName(string name) returns Users[]|sql:Error
     return error("Error searching users by name");
 }
 
-public isolated function getUserById(int id) returns Users|sql:Error {
-    stream<Users, sql:Error?> resultStream = dbClient->query(getUserByIdQuery(id));
 
-    if resultStream is stream<Users> {
-        Users[] users = from Users user in resultStream
-                       select user;
+public isolated function getUserById(int userId) returns Users|error {
+    stream<Users, sql:Error?> resultStream = dbClient->query(getUserByIdQuery(userId));
 
-        if users.length() > 0 {
-            return users[0]; // Return the first (and only) user
-        } else {
-            return error("User not found");
-        }
-    }
+    check from Users user in resultStream
+        do {
+            return user;
+        };
 
-    return error("Error fetching user by ID");
+    return error("User not found for ID: " + userId.toString());
 }
+

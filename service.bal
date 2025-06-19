@@ -11,7 +11,7 @@ import ballerina_CRUD_task.database;
 import ballerina/http;
 import ballerina/sql;
 
-service / on new http:Listener(9091) {
+service / on new http:Listener(8085) {
 
     // Resource function to get all books.
     resource function get users() returns database:Users[]|http:InternalServerError {
@@ -63,7 +63,6 @@ resource function patch users/[int id](database:UserUpdate user) returns http:No
     return http:NO_CONTENT;
 }
 
-
 resource function get users/search(@http:Query string name) returns database:Users[]|http:InternalServerError {
     database:Users[]|error response = database:searchUserByName(name);
 
@@ -74,24 +73,24 @@ resource function get users/search(@http:Query string name) returns database:Use
     }
 
     return response;
-    }
+}
 
-    resource function get users/[int id]() returns database:Users|http:NotFound|http:InternalServerError {
+
+resource function get users/[int id]() returns database:Users|http:InternalServerError|http:NotFound {
     database:Users|error response = database:getUserById(id);
 
     if response is error {
-        if response.message() == "User not found" {
-            return <http:NotFound>{
-                body: "User not found"
-            };
+        if response.message() == "User not found for ID: " + id.toString() {
+            return <http:NotFound>{ body: response.message() };
         }
         return <http:InternalServerError>{
-            body: "Error retrieving user"
+            body: "Error while retrieving user"
         };
     }
 
     return response;
 }
+
 
 }
 
