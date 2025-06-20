@@ -29,7 +29,7 @@ public type Users record {|
 
     // User age
     @sql:Column {name: "age"}
-    string age;
+    int age;
 
     // // User account creation time
     // @sql:Column {name: "created_at"}
@@ -43,13 +43,13 @@ public type Users record {|
 public type UserCreate record {|
     string name;
     string email;
-    string age;
+    int age;
 |};
 
 public type UserUpdate record {|
     string? name = ();
     string? email = ();
-    string? age = ();
+    int? age = ();
 |};
 
 
