@@ -13,9 +13,9 @@ import ballerina/sql;
 
 service / on new http:Listener(8085) {
 
-    // Resource function to get all books.
+    // Resource function to get all users.
     resource function get users() returns database:Users[]|http:InternalServerError {
-        // Call the getBooks function to fetch data from the database.
+        // Call the getUsers function to fetch data from the database.
         database:Users[]|error response = database:getUsers();
 
         // If there's an error while fetching, return an internal server error.
@@ -25,7 +25,7 @@ service / on new http:Listener(8085) {
             };
         }
 
-        // Return the response containing the list of books.
+        // Return the response containing the list of users.
         return response;
     }
 

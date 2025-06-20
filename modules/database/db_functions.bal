@@ -1,7 +1,7 @@
 import ballerina/sql;
 import ballerina/io;
 
-// Define the function to fetch books from the database.
+// Define the function to fetch Users from the database.
 public function getUsers() returns Users[]|error {
     Users[] users = [];
     stream<Users, error?> resultStream = dbClient->query(`SELECT * FROM users`);
