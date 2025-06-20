@@ -56,30 +56,30 @@ bal build
 bal run
 ```
 
-The service will start on port 8080.
+The service will start on port 8085.
 
 ## API Request Examples
 
 ### Create User
 ```bash
-curl -X POST http://localhost:8080/users \
+curl -X POST http://localhost:8085/users \
 -H "Content-Type: application/json" \
 -d '{"name": "John Doe", "email": "john@example.com", "age": "30"}'
 ```
 
 ### Get All Users
 ```bash
-curl http://localhost:8080/users
+curl http://localhost:8085/users
 ```
 
 ### Update User
 ```bash
-curl -X PATCH http://localhost:8080/users/1 \
+curl -X PATCH http://localhost:8085/users/1 \
 -H "Content-Type: application/json" \
 -d '{"name": "Updated Name"}'
 ```
 
 ### Delete User
 ```bash
-curl -X DELETE http://localhost:8080/users/1
+curl -X DELETE http://localhost:8085/users/1
 ```
