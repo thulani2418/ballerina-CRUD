@@ -13,7 +13,7 @@ import ballerina/sql;
 
 service / on new http:Listener(8085) {
 
-    // Resource function to get all users.
+    // GET /users
     resource function get users() returns database:Users[]|http:InternalServerError {
         // Call the getUsers function to fetch data from the database.
         database:Users[]|error response = database:getUsers();
@@ -29,6 +29,8 @@ service / on new http:Listener(8085) {
         return response;
     }
 
+    // POST /users
+    // Returns: 201 Created on success, or 500 Internal Server Error.
         resource function post users(database:UserCreate user) returns http:Created|http:InternalServerError {
         sql:ExecutionResult|sql:Error response = database:insertUser(user);
         if response is error {
@@ -39,6 +41,8 @@ service / on new http:Listener(8085) {
         return http:CREATED;
     }
 
+    // DELETE /users/{id}
+    // Returns: 204 No Content on success, or 500 Internal Server Error.
     resource function delete users/[int id]() returns http:NoContent|http:InternalServerError {
      sql:ExecutionResult|sql:Error response = database:deleteUser(id);
 
@@ -51,6 +55,9 @@ service / on new http:Listener(8085) {
      return http:NO_CONTENT;
 }
 
+
+// PATCH /users/{id}
+// Returns: 204 No Content on success, or 500 Internal Server Error.
 resource function patch users/[int id](database:UserUpdate user) returns http:NoContent|http:InternalServerError {
     sql:ExecutionResult|sql:Error response = database:updateUser(id, user);
 
@@ -63,6 +70,8 @@ resource function patch users/[int id](database:UserUpdate user) returns http:No
     return http:NO_CONTENT;
 }
 
+// GET /users/search?name={name} 
+// Returns: Array of users or 500 Internal Server Error.
 resource function get users/search(@http:Query string name) returns database:Users[]|http:InternalServerError {
     database:Users[]|error response = database:searchUserByName(name);
 
@@ -76,6 +85,8 @@ resource function get users/search(@http:Query string name) returns database:Use
 }
 
 
+    // GET /users/{id}  
+    // Returns: User record, 404 Not Found, or 500 Internal Server Error.
 resource function get users/[int id]() returns database:Users|http:InternalServerError|http:NotFound {
     database:Users|error response = database:getUserById(id);
 
